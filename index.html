@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RetinaScan - Diabetic Retinopathy Detection</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="logo">RetinaScan</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#" class="btn btn-primary" id="scan-now-btn">Scan Now</a></li>
+            </ul>
+            <div class="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Early Detection for Diabetic Retinopathy</h1>
+                <p>Upload a retinal scan and get instant AI-powered analysis to detect signs of diabetic eye disease</p>
+                <a href="#upload" class="btn btn-primary">Upload Scan Now</a>
+                <div class="stats">
+                    <div class="stat-item">
+                        <h3>95%</h3>
+                        <p>Accuracy</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>10,000+</h3>
+                        <p>Scans Analyzed</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>Instant</h3>
+                        <p>Results</p>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="/static/diabetic.jpg" alt="Retinal scan visualization">
+            </div>
+        </div>
+    </section>
+
+    <!-- Upload Section -->
+    <section class="upload-section" id="upload">
+        <div class="container">
+            <h2>Upload Your Retinal Scan</h2>
+            <p class="subtitle">For best results, use high-quality fundus images</p>
+            
+            <div class="upload-options">
+                <div class="upload-box" id="drop-area">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Drag & drop your image here or</p>
+                    <form action="/upload" method="POST" enctype="multipart/form-data">
+                        <input type="text" name="patient_name" placeholder="Enter Patient Name" required />
+                        
+                    </form>
+                    
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                    <!--<button class="btn btn-primary" id="browse-btn">Browse Files</button>-->
+                    <p class="file-types">Supports: JPG, PNG, DICOM</p>
+                    <form action="/" method="POST" enctype="multipart/form-data">
+                        <input type="file" name="file" />
+                        <input type="submit" value="Upload" />
+                      </form>
+                      
+                </div>
+                
+                <!--<div class="or-divider">OR</div>-->
+                
+               <!---- <div class="camera-option">
+                    <i class="fas fa-camera"></i>
+                    <p>Capture directly from device</p>
+                    <button class="btn btn-secondary" id="camera-btn">Open Camera</button>
+                </div>-->
+            </div>
+            
+            <div class="instructions">
+                <h3>How to get a good scan:</h3>
+                <ul>
+                    <li><i class="fas fa-lightbulb"></i> Ensure proper lighting</li>
+                    <li><i class="fas fa-crosshairs"></i> Center the retina in the image</li>
+                    <li><i class="fas fa-hand-paper"></i> Keep the camera steady</li>
+                    <li><i class="fas fa-expand"></i> Use high resolution when possible</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Camera Modal -->
+    <div class="modal" id="camera-modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Capture Retinal Image</h3>
+            <div class="camera-container">
+                <video id="camera-view" autoplay playsinline></video>
+                <canvas id="camera-canvas" style="display: none;"></canvas>
+            </div>
+            <button class="btn btn-primary" id="capture-btn">Capture Image</button>
+        </div>
+    </div>
+
+    <!-- Results Section (Initially Hidden) -->
+    <section class="results-section" id="results" style="display: none;">
+        <div class="container">
+            <div class="results-header">
+                <h2>Scan Results</h2>
+                <p class="scan-date" id="scan-date"></p>
+            </div>
+            
+            <div class="results-content">
+                <div class="image-display">
+                    <img id="result-image" src="" alt="Uploaded retinal scan">
+                    <div class="image-annotations" id="annotations">
+                        <!-- Annotations will be added here by JS -->
+                    </div>
+                </div>
+                
+                <div class="results-summary">
+                    <div class="severity-indicator">
+                        <h3>Diabetic Retinopathy Detection</h3>
+                        <div class="severity-level" id="severity-level">
+                            <span class="level" id="severity-text">No DR</span>
+                            <div class="severity-bar">
+                                <div class="severity-fill" id="severity-fill"></div>
+                            </div>
+                        </div>
+                        <p class="confidence" id="confidence-text">AI Confidence: 0%</p>
+                    </div>
+                    
+                    <div class="findings">
+                        <h4>Key Findings:</h4>
+                        <ul id="findings-list">
+                            <!-- Findings will be added here by JS -->
+                        </ul>
+                    </div>
+                    
+                    <div class="recommendations">
+                        <h4>Recommendations:</h4>
+                        <ul id="recommendations-list">
+                            <!-- Recommendations will be added here by JS -->
+                        </ul>
+                    </div>
+                    
+                    <div class="actions">
+                        <button class="btn btn-primary" id="save-btn">Save Results</button>
+                        <button class="btn btn-secondary" id="specialist-btn">Find a Specialist</button>
+                        <button class="btn btn-text" id="second-opinion-btn">Get Second Opinion</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <h2>How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Upload Your Scan</h3>
+                    <p>Take a photo of your retina or upload an existing retinal scan from your device.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>AI Analysis</h3>
+                    <p>Our advanced algorithms analyze the image for signs of diabetic retinopathy.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Get Results</h3>
+                    <p>Receive immediate feedback with severity level and recommendations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="container">
+            <h2>About Diabetic Retinopathy</h2>
+            <p>Diabetic retinopathy is a diabetes complication that affects eyes. It's caused by damage to the blood vessels of the light-sensitive tissue at the back of the eye (retina). Early detection can prevent vision loss.</p>
+            
+            <div class="risk-factors">
+                <h3>Risk Factors:</h3>
+                <div class="factors">
+                    <div class="factor">
+                        <i class="fas fa-syringe"></i>
+                        <p>Duration of diabetes</p>
+                    </div>
+                    <div class="factor">
+                        <i class="fas fa-tint"></i>
+                        <p>Poor blood sugar control</p>
+                    </div>
+                    <div class="factor">
+                        <i class="fas fa-weight"></i>
+                        <p>High blood pressure</p>
+                    </div>
+                    <div class="factor">
+                        <i class="fas fa-chart-line"></i>
+                        <p>High cholesterol</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
+    
